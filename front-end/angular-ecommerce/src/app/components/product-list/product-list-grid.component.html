@@ -6,11 +6,22 @@
         <!-- boucle sur les products-->
         <div *ngFor="let tempProduct of products" class="col-md-3">
           <div class="product-box">
-            <img src="{{ tempProduct.image_url}}" class="img-responsive">
-            <h1>{{tempProduct.name}}</h1>
+            <!-- lien vers le detail du produits-->
+            <a routerLink="/products/{{tempProduct.id}}">
+              <img src="{{ tempProduct.image_url}}" class="img-responsive">
+            </a>
+
+            <a routerLink="/products/{{tempProduct.id}}">
+              <h1>{{tempProduct.name}}</h1>
+            </a>
             <div class="price">{{tempProduct.unit_price | currency:'USD'}}</div>
             <a href="#" class="primary-btn">Add to cart</a>
           </div>
+        </div>
+
+        <!-- si il n y a aucun produit trouver -->
+        <div *ngIf="products?.length == 0" class="alert alert-warning col-md-12" role="alert">
+          No products found.
         </div>
       </div>
     </div>

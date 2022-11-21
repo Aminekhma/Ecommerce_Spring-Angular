@@ -11,7 +11,9 @@ import {ActivatedRoute} from "@angular/router";
 export class ProductListComponent implements OnInit {
 
   products : Product[] = [];
+  searchMode : boolean = false;
   currentCategoryId: number = 1;
+
   constructor(private productService : ProductService,
               private route:ActivatedRoute) { }
 
@@ -23,10 +25,47 @@ export class ProductListComponent implements OnInit {
   }
 
   listProducts() {
-    this.productService.getProductList().subscribe(
+    //verifie si on est en train de chercher ou pas
+    this.searchMode = this.route.snapshot.paramMap.has('keyword');
+
+    if(this.searchMode){
+      console.log("search mode")
+      this.handleSearchProducts();
+    }
+    else {
+      this.handleListProducts();
+    }
+
+  }
+
+  handleListProducts(){
+
+    //verifie si l'id de la categorie de product existe
+    const hasCategory: boolean = this.route.snapshot.paramMap.has('id');
+
+    if (hasCategory) {
+      //convertir en int l'id pour l'exploiter
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id')!;
+    } else {
+      //pas de category... par défaut sera la categorie 1
+      this.currentCategoryId = 1;
+    }
+    this.productService.getProductList(this.currentCategoryId).subscribe(
       data => {
-        console.log(data)
         this.products = data;
+      }
+    )
+
+  }
+
+  private handleSearchProducts() {
+    const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
+
+    // recherche des produits qui utilise se mot
+
+    this.productService.searchProducts(theKeyword).subscribe(
+      data=>{
+        this.products=data;
       }
     )
   }
